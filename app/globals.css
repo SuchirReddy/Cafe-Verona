@@ -1,26 +1,42 @@
 @import "tailwindcss";
+@plugin "tailwindcss-animate";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-coffee-50: #fcf9f5;
+  --color-coffee-100: #f5f0e6;
+  --color-coffee-200: #eadfc8;
+  --color-coffee-300: #dfcda4;
+  --color-coffee-400: #d2b47e;
+  --color-coffee-500: #c59b5f;
+  --color-coffee-600: #b88147;
+  --color-coffee-700: #99643d;
+  --color-coffee-800: #7d5235;
+  --color-coffee-900: #65432d;
+  
+  --color-cream: #F9F6F0;
+  --color-gold: #c59b5f;
+  --color-olive: #556B2F;
+  
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply text-coffee-900 font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-lg;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
 }
