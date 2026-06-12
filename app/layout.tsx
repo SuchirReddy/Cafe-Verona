@@ -10,6 +10,9 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 export const metadata: Metadata = {
   title: "Cafe Veřona Menu & Ordering",
   description: "Browse our menu, place orders, and join our waitlist.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
