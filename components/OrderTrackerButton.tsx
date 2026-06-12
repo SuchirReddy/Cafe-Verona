@@ -47,8 +47,9 @@ export default function OrderTrackerButton() {
         const uniqueActiveOrders: Order[] = [];
         const seenTypes = new Set<string>();
         for (const order of validOrders) {
-          if (!seenTypes.has(order.order_type)) {
-            seenTypes.add(order.order_type);
+          const type = order.order_type || 'unknown';
+          if (!seenTypes.has(type)) {
+            seenTypes.add(type);
             uniqueActiveOrders.push(order);
           }
         }
@@ -62,7 +63,7 @@ export default function OrderTrackerButton() {
     fetchActiveOrders();
 
     const channel = supabase
-      .channel("menu_order_tracker")
+      .channel(`menu_order_tracker_${Math.random().toString(36).substring(7)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },

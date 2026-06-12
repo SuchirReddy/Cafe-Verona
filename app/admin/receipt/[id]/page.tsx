@@ -191,8 +191,8 @@ export default function ReceiptPage({ params }: { params: Promise<{ id: string }
         ) : (
           <div>
             <div className="text-center mb-10">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-coffee-100 text-coffee-800 rounded-full mb-4">
-                <FileText size={32} />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 overflow-hidden shadow-sm border border-coffee-200">
+                <img src="/logo.png" alt="Cafe Verona Logo" className="w-full h-full object-cover" />
               </div>
               <h1 className="text-3xl font-bold font-serif text-coffee-900 mb-1">Cafe Veřona</h1>
               <p className="text-coffee-500">Official Receipt</p>

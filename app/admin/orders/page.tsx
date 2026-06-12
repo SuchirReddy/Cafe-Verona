@@ -110,13 +110,13 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+      <div className="flex flex-wrap justify-between items-start sm:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold font-serif text-coffee-900 mb-1">Orders Management</h1>
           <p className="text-coffee-600">Track and manage customer orders.</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-wrap gap-4 w-full sm:w-auto">
           <div className="flex bg-white rounded-xl shadow-sm border border-coffee-100 p-1">
             {["active", "completed", "all"].map((f) => (
               <button

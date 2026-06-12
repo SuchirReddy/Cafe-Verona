@@ -8,7 +8,7 @@ import { useCartStore } from "@/store/cartStore";
 import MenuCard from "@/components/MenuCard";
 import CartDrawer from "@/components/CartDrawer";
 import OrderTrackerButton from "@/components/OrderTrackerButton";
-import { Search, Filter, Coffee, ArrowUpDown } from "lucide-react";
+import { Search, Filter, Coffee, ArrowUpDown, Award, Heart } from "lucide-react";
 
 function MenuContent() {
   const searchParams = useSearchParams();
@@ -72,16 +72,16 @@ function MenuContent() {
     .filter((item) => {
       // Category filter
       if (activeCategory !== "all" && item.category_id !== activeCategory) return false;
-      
+
       // Search filter
       if (searchQuery && !item.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-      
+
       // Allergen filter (exclude items that contain ANY of the excluded allergens)
       if (excludedAllergens.length > 0 && item.allergen_list) {
         const hasExcludedAllergen = item.allergen_list.some((a) => excludedAllergens.includes(a));
         if (hasExcludedAllergen) return false;
       }
-      
+
       // Time-based rules filter
       if (item.time_based_rules && item.time_based_rules.available_hours) {
         const now = new Date();
@@ -89,7 +89,7 @@ function MenuContent() {
         const { start, end } = item.time_based_rules.available_hours;
         if (currentTime < start || currentTime > end) return false;
       }
-      
+
       return true;
     })
     .sort((a, b) => {
@@ -98,47 +98,68 @@ function MenuContent() {
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 pt-4 pb-24 min-h-screen">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 sticky top-4 z-40 bg-white/70 backdrop-blur-xl p-4 md:p-6 rounded-3xl shadow-sm border border-white">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 bg-white/70 backdrop-blur-xl p-4 md:p-6 rounded-3xl shadow-sm border border-white">
         <div>
           <h1 className="text-4xl md:text-5xl font-bold font-serif mb-2 text-coffee-900 flex items-center gap-3">
-            <Coffee className="text-coffee-600" size={36} />
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm shrink-0">
+              <img src="/logo.png" alt="Cafe Verona Logo" className="w-full h-full object-cover" />
+            </div>
             Our Menu
           </h1>
           <p className="text-coffee-700 text-lg">
             {tableNumber ? `Ordering for Table ${tableNumber}` : "Please select a table to order"}
           </p>
-          <div className="flex gap-4 mt-2">
-            <a href="/membership/lookup" className="text-sm font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 px-3 py-1 rounded-full transition-colors">
+          <div className="flex gap-3 mt-3">
+            <a href="/membership/lookup" className="flex items-center gap-1.5 text-sm font-bold text-coffee-900 bg-gradient-to-r from-yellow-100 to-[#E8DCCC] border border-[#D4AF37]/40 shadow-sm hover:shadow-md hover:scale-105 px-4 py-1.5 rounded-full transition-all">
+              <Award size={16} className="text-[#B8860B]" />
               Check Membership
             </a>
-            <a href="/favorites" className="text-sm font-medium text-red-500 bg-red-50 hover:bg-red-100 px-3 py-1 rounded-full transition-colors">
+            <a href="/favorites" className="flex items-center gap-1.5 text-sm font-bold text-coffee-900 bg-white border border-rose-200 shadow-sm hover:shadow-md hover:scale-105 hover:border-rose-300 px-4 py-1.5 rounded-full transition-all">
+              <Heart size={16} className="text-rose-500" />
               Favorites
             </a>
           </div>
         </div>
         <div className="flex items-center gap-4 w-full md:w-auto">
           {!tableNumber && (
-            <select 
+            <select
               className="bg-white border border-coffee-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-coffee-500 shadow-sm font-medium"
               onChange={(e) => setTableNumber(parseInt(e.target.value))}
               value={tableNumber || ""}
             >
               <option value="" disabled>Select Table</option>
-              {[1,2,3,4,5,6,7,8,9,10].map(n => (
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
                 <option key={n} value={n}>Table {n}</option>
               ))}
             </select>
           )}
-          <div className="fixed bottom-6 right-6 z-40 md:relative md:bottom-0 md:right-0 flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3">
             <OrderTrackerButton />
+            <a href="/favorites" className="flex items-center justify-center w-[52px] h-[52px] rounded-full bg-white border border-rose-100 shadow-sm hover:shadow-md hover:scale-105 transition-all text-rose-500" title="Favorites">
+              <Heart size={24} />
+            </a>
             <CartDrawer />
           </div>
         </div>
       </header>
 
-      <div className="bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm mb-8 border border-white/40">
+      {/* Mobile floating bar */}
+      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between w-[92vw] max-w-md bg-white/80 backdrop-blur-xl border border-white shadow-2xl rounded-full p-3 px-6 transition-all">
+        <OrderTrackerButton />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ml-4 md:ml-6 w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-xl bg-cream z-10 flex items-center justify-center">
+          <img src="/logo.png" alt="Cafe Verona" className="w-full h-full object-cover" />
+        </div>
+        <div className="flex items-center gap-3">
+          <a href="/favorites" className="flex items-center justify-center w-12 h-12 rounded-full bg-white border border-rose-100 shadow-sm hover:scale-105 transition-all text-rose-500">
+            <Heart size={22} />
+          </a>
+          <CartDrawer />
+        </div>
+      </div>
+
+      <div className="sticky top-4 z-40 bg-white/80 backdrop-blur-xl rounded-2xl p-4 shadow-md mb-8 border border-white/60">
         <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-          
+
           <div className="flex-1 w-full relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-coffee-400" size={20} />
             <input
@@ -152,21 +173,21 @@ function MenuContent() {
 
           <div className="flex gap-3 w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0 hide-scrollbar">
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setShowAllergens(!showAllergens)}
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl border whitespace-nowrap transition-colors ${excludedAllergens.length > 0 ? 'bg-coffee-100 border-coffee-300 text-coffee-900 font-medium' : 'bg-white border-coffee-200 text-coffee-700 hover:bg-coffee-50'}`}
               >
                 <Filter size={18} />
                 Allergen Filter {excludedAllergens.length > 0 && `(${excludedAllergens.length})`}
               </button>
-              
+
               {showAllergens && (
                 <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-coffee-100 p-4 z-20">
                   <h4 className="font-bold text-coffee-900 mb-3 border-b pb-2">Exclude Allergens</h4>
                   <div className="space-y-2 max-h-48 overflow-y-auto">
                     {allAllergens.map(allergen => (
                       <label key={allergen} className="flex items-center gap-2 cursor-pointer">
-                        <input 
+                        <input
                           type="checkbox"
                           checked={excludedAllergens.includes(allergen)}
                           onChange={() => toggleAllergen(allergen)}
@@ -178,7 +199,7 @@ function MenuContent() {
                     {allAllergens.length === 0 && <span className="text-sm text-gray-500">No allergens found.</span>}
                   </div>
                   {excludedAllergens.length > 0 && (
-                    <button 
+                    <button
                       onClick={() => setExcludedAllergens([])}
                       className="w-full text-center text-sm text-coffee-600 mt-3 pt-2 border-t hover:text-coffee-900"
                     >
@@ -189,7 +210,7 @@ function MenuContent() {
               )}
             </div>
 
-            <button 
+            <button
               onClick={() => setSortByPrice(p => p === "asc" ? "desc" : "asc")}
               className="flex items-center gap-2 px-4 py-3 rounded-xl border bg-white border-coffee-200 text-coffee-700 hover:bg-coffee-50 transition-colors whitespace-nowrap"
             >
@@ -202,11 +223,10 @@ function MenuContent() {
         <div className="flex gap-2 overflow-x-auto mt-6 pb-2 hide-scrollbar">
           <button
             onClick={() => setActiveCategory("all")}
-            className={`px-6 py-2.5 rounded-full whitespace-nowrap font-medium transition-all ${
-              activeCategory === "all" 
-                ? "bg-coffee-800 text-cream shadow-md" 
+            className={`px-6 py-2.5 rounded-full whitespace-nowrap font-medium transition-all ${activeCategory === "all"
+                ? "bg-coffee-800 text-cream shadow-md"
                 : "bg-coffee-100/50 text-coffee-800 hover:bg-coffee-200"
-            }`}
+              }`}
           >
             All Items
           </button>
@@ -214,11 +234,10 @@ function MenuContent() {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-6 py-2.5 rounded-full whitespace-nowrap font-medium transition-all ${
-                activeCategory === cat.id 
-                  ? "bg-coffee-800 text-cream shadow-md" 
+              className={`px-6 py-2.5 rounded-full whitespace-nowrap font-medium transition-all ${activeCategory === cat.id
+                  ? "bg-coffee-800 text-cream shadow-md"
                   : "bg-coffee-100/50 text-coffee-800 hover:bg-coffee-200"
-              }`}
+                }`}
             >
               {cat.name}
             </button>

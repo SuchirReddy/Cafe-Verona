@@ -81,8 +81,8 @@ export default function WaitlistJoinPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="glass-card max-w-md w-full rounded-3xl p-8">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-coffee-100 text-coffee-800 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Coffee size={32} />
+          <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 border border-coffee-200 shadow-sm">
+            <img src="/logo.png" alt="Cafe Verona Logo" className="w-full h-full object-cover" />
           </div>
           <h1 className="text-3xl font-bold font-serif text-coffee-900 mb-2">Join Waitlist</h1>
           <p className="text-coffee-600">Enter your details to reserve your spot.</p>
