@@ -8,6 +8,7 @@ import { useCartStore } from "@/store/cartStore";
 import MenuCard from "@/components/MenuCard";
 import CartDrawer from "@/components/CartDrawer";
 import OrderTrackerButton from "@/components/OrderTrackerButton";
+import TableSelect from "@/components/TableSelect";
 import { Search, Filter, Coffee, ArrowUpDown, Award, Heart } from "lucide-react";
 
 function MenuContent() {
@@ -129,16 +130,11 @@ function MenuContent() {
         </div>
         <div className="flex items-center gap-4 w-full md:w-auto">
           {!tableNumber && (
-            <select
-              className="bg-white border border-coffee-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-coffee-500 shadow-sm font-medium"
-              onChange={(e) => setTableNumber(parseInt(e.target.value))}
-              value={tableNumber || ""}
-            >
-              <option value="" disabled>Select Table</option>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
-                <option key={n} value={n}>Table {n}</option>
-              ))}
-            </select>
+            <TableSelect
+              value={tableNumber}
+              onChange={(val) => setTableNumber(val)}
+              className="w-40 shadow-sm"
+            />
           )}
           <div className="hidden md:flex items-center gap-3">
             <OrderTrackerButton />

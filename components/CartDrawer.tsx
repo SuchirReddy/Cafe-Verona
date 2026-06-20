@@ -8,6 +8,7 @@ import { formatPrice } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { createClient } from "@/lib/supabase/client";
+import TableSelect from "@/components/TableSelect";
 
 export default function CartDrawer() {
   const router = useRouter();
@@ -303,16 +304,10 @@ export default function CartDrawer() {
                     {orderType === "dine-in" ? (
                       <div>
                         <label className="block text-sm font-medium mb-1 text-coffee-800 flex items-center gap-1">Table Number</label>
-                        <select
-                          value={tableNumber || ""}
-                          onChange={(e) => setTableNumber(parseInt(e.target.value))}
-                          className="w-full border border-coffee-200 rounded-lg p-2.5 bg-coffee-50 focus:ring-2 focus:ring-coffee-500 focus:outline-none"
-                        >
-                          <option value="" disabled>Select Table</option>
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-                            <option key={n} value={n}>Table {n}</option>
-                          ))}
-                        </select>
+                        <TableSelect
+                          value={tableNumber}
+                          onChange={(val) => setTableNumber(val)}
+                        />
                       </div>
                     ) : (
                       <>
