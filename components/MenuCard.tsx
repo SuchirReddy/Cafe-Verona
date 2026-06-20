@@ -39,6 +39,8 @@ export default function MenuCard({ item, previewOnly = false }: MenuCardProps) {
                 src={item.image_url}
                 alt={item.name}
                 className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-coffee-600">
@@ -88,6 +90,8 @@ export default function MenuCard({ item, previewOnly = false }: MenuCardProps) {
                 src={item.image_url}
                 alt={item.name}
                 className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
             )}
             <Dialog.Close className="absolute top-4 right-4 bg-black/40 text-white rounded-full p-2 hover:bg-black/60 transition-colors">

@@ -19,6 +19,7 @@ function MenuContent() {
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [items, setItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(20);
 
   // Filters and state
   const [activeCategory, setActiveCategory] = useState<string>("all");
@@ -33,6 +34,10 @@ function MenuContent() {
       setTableNumber(parseInt(tableParam));
     }
   }, [tableParam, setTableNumber]);
+
+  useEffect(() => {
+    setVisibleCount(20);
+  }, [activeCategory, searchQuery, sortByPrice, excludedAllergens]);
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -95,6 +100,8 @@ function MenuContent() {
     .sort((a, b) => {
       return sortByPrice === "asc" ? a.price - b.price : b.price - a.price;
     });
+
+  const visibleItems = filteredItems.slice(0, visibleCount);
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 pt-4 pb-24 min-h-screen">
@@ -256,11 +263,23 @@ function MenuContent() {
           <p className="text-coffee-600">Try adjusting your filters or search query.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
-          {filteredItems.map((item) => (
-            <MenuCard key={item.id} item={item} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+            {visibleItems.map((item) => (
+              <MenuCard key={item.id} item={item} />
+            ))}
+          </div>
+          {visibleCount < filteredItems.length && (
+            <div className="flex justify-center mt-12 mb-8">
+              <button
+                onClick={() => setVisibleCount((prev) => prev + 20)}
+                className="bg-coffee-800 text-cream px-8 py-3 rounded-full font-bold shadow-md hover:bg-coffee-900 transition-all hover:scale-105"
+              >
+                Load More Items
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
