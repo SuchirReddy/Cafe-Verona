@@ -9,7 +9,17 @@ import MenuCard from "@/components/MenuCard";
 import CartDrawer from "@/components/CartDrawer";
 import OrderTrackerButton from "@/components/OrderTrackerButton";
 import TableSelect from "@/components/TableSelect";
-import { Search, Filter, Coffee, ArrowUpDown, Award, Heart } from "lucide-react";
+import { Search, Filter, Coffee, ArrowUpDown, Award, Heart, ChevronLeft, ChevronRight, LayoutGrid, CupSoda, Cake, Croissant, Utensils, Leaf } from "lucide-react";
+
+const getCategoryIcon = (catName: string) => {
+  const name = catName.toLowerCase();
+  if (name.includes('cold') || name.includes('iced') || name.includes('frappe') || name.includes('smoothie')) return <CupSoda className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />;
+  if (name.includes('tea') || name.includes('matcha')) return <Leaf className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />;
+  if (name.includes('pastry') || name.includes('croissant') || name.includes('bakery')) return <Croissant className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />;
+  if (name.includes('cake') || name.includes('dessert') || name.includes('sweet')) return <Cake className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />;
+  if (name.includes('food') || name.includes('sandwich') || name.includes('savory') || name.includes('breakfast')) return <Utensils className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />;
+  return <Coffee className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />;
+};
 
 function MenuContent() {
   const searchParams = useSearchParams();
@@ -23,7 +33,7 @@ function MenuContent() {
   const [visibleCount, setVisibleCount] = useState(20);
 
   // Filters and state
-  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortByPrice, setSortByPrice] = useState<"asc" | "desc">("asc");
   const [showAllergens, setShowAllergens] = useState(false);
@@ -77,7 +87,7 @@ function MenuContent() {
   const filteredItems = items
     .filter((item) => {
       // Category filter
-      if (activeCategory !== "all" && item.category_id !== activeCategory) return false;
+      if (activeCategory && activeCategory !== "all" && item.category_id !== activeCategory) return false;
 
       // Search filter
       if (searchQuery && !item.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
@@ -223,57 +233,123 @@ function MenuContent() {
           </div>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto mt-6 pb-2 hide-scrollbar">
-          <button
-            onClick={() => setActiveCategory("all")}
-            className={`px-6 py-2.5 rounded-full whitespace-nowrap font-medium transition-all ${activeCategory === "all"
-                ? "bg-coffee-800 text-cream shadow-md"
-                : "bg-coffee-100/50 text-coffee-800 hover:bg-coffee-200"
-              }`}
-          >
-            All Items
-          </button>
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`px-6 py-2.5 rounded-full whitespace-nowrap font-medium transition-all ${activeCategory === cat.id
-                  ? "bg-coffee-800 text-cream shadow-md"
-                  : "bg-coffee-100/50 text-coffee-800 hover:bg-coffee-200"
-                }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
       </div>
 
       {loading ? (
         <div className="flex justify-center items-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coffee-800"></div>
         </div>
-      ) : filteredItems.length === 0 ? (
-        <div className="text-center py-20 bg-white/40 rounded-2xl border border-white/60">
-          <Coffee className="mx-auto text-coffee-300 mb-4" size={48} />
-          <h3 className="text-xl font-medium text-coffee-800">No items found</h3>
-          <p className="text-coffee-600">Try adjusting your filters or search query.</p>
-        </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
-            {visibleItems.map((item) => (
-              <MenuCard key={item.id} item={item} />
-            ))}
-          </div>
-          {visibleCount < filteredItems.length && (
-            <div className="flex justify-center mt-12 mb-8">
+          {!activeCategory && !searchQuery ? (
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mt-8">
               <button
-                onClick={() => setVisibleCount((prev) => prev + 20)}
-                className="bg-coffee-800 text-cream px-8 py-3 rounded-full font-bold shadow-md hover:bg-coffee-900 transition-all hover:scale-105"
+                onClick={() => setActiveCategory("all")}
+                className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl shadow-sm hover:shadow-md border border-[#E8E2D2] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0 group transition-all hover:-translate-y-1 text-left"
               >
-                Load More Items
+                <div>
+                  <LayoutGrid className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />
+                  <h3 className="text-lg md:text-2xl font-bold text-[#2C331F] mb-1 group-hover:text-[#985923] transition-colors leading-tight">All Items</h3>
+                  <p className="text-[11px] md:text-sm text-[#2C331F]/60 font-medium">{items.length} {items.length === 1 ? 'Item' : 'Items'}</p>
+                </div>
+                <div className="w-8 h-8 md:w-12 md:h-12 bg-[#FAF8F3] rounded-full flex items-center justify-center border border-[#E8E2D2] group-hover:bg-[#985923] group-hover:text-white transition-colors text-[#985923] self-end md:self-auto mt-auto md:mt-0">
+                  <ChevronRight size={16} className="md:w-6 md:h-6" />
+                </div>
               </button>
+              {categories.map((cat) => {
+                const itemCount = items.filter(i => i.category_id === cat.id).length;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id)}
+                    className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl shadow-sm hover:shadow-md border border-[#E8E2D2] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0 group transition-all hover:-translate-y-1 text-left"
+                  >
+                    <div>
+                      {getCategoryIcon(cat.name)}
+                      <h3 className="text-lg md:text-2xl font-bold text-[#2C331F] mb-1 group-hover:text-[#985923] transition-colors leading-tight">{cat.name}</h3>
+                      <p className="text-[11px] md:text-sm text-[#2C331F]/60 font-medium">{itemCount} {itemCount === 1 ? 'Item' : 'Items'}</p>
+                    </div>
+                    <div className="w-8 h-8 md:w-12 md:h-12 bg-[#FAF8F3] rounded-full flex items-center justify-center border border-[#E8E2D2] group-hover:bg-[#985923] group-hover:text-white transition-colors text-[#985923] self-end md:self-auto mt-auto md:mt-0">
+                      <ChevronRight size={16} className="md:w-6 md:h-6" />
+                    </div>
+                  </button>
+                );
+              })}
             </div>
+          ) : (
+            <>
+              {activeCategory && !searchQuery && (
+                <div className="flex gap-2 overflow-x-auto mt-4 mb-8 pb-2 hide-scrollbar">
+                  <button
+                    onClick={() => setActiveCategory(null)}
+                    className="flex items-center gap-1 px-5 py-2.5 rounded-full whitespace-nowrap font-bold transition-all bg-white border border-[#E8E2D2] text-[#2C331F] hover:bg-black/5 shadow-sm"
+                  >
+                    <ChevronLeft size={18} />
+                    Categories Grid
+                  </button>
+                  <button
+                    onClick={() => setActiveCategory("all")}
+                    className={`px-6 py-2.5 rounded-full whitespace-nowrap font-bold transition-all border ${activeCategory === "all"
+                        ? "bg-[#985923] text-white border-transparent shadow-md"
+                        : "bg-white border-[#E8E2D2] text-[#2C331F] hover:bg-black/5 shadow-sm"
+                      }`}
+                  >
+                    All Items
+                  </button>
+                  {categories.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setActiveCategory(cat.id)}
+                      className={`px-6 py-2.5 rounded-full whitespace-nowrap font-bold transition-all border ${activeCategory === cat.id
+                          ? "bg-[#985923] text-white border-transparent shadow-md"
+                          : "bg-white border-[#E8E2D2] text-[#2C331F] hover:bg-black/5 shadow-sm"
+                        }`}
+                    >
+                      {cat.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {searchQuery && (
+                <div className="mb-8 mt-4 flex items-center justify-between">
+                  <h2 className="text-2xl font-bold text-[#2C331F]">Search Results for "{searchQuery}"</h2>
+                  {activeCategory && (
+                     <button
+                      onClick={() => setActiveCategory(null)}
+                      className="text-sm font-bold text-[#985923] hover:underline"
+                    >
+                      Clear Category Filter
+                    </button>
+                  )}
+                </div>
+              )}
+              
+              {filteredItems.length === 0 ? (
+                <div className="text-center py-20 bg-white/40 rounded-3xl border border-white/60 shadow-sm mt-8">
+                  <Coffee className="mx-auto text-coffee-300 mb-4" size={48} />
+                  <h3 className="text-xl font-bold text-[#2C331F] mb-2">No items found</h3>
+                  <p className="text-[#2C331F]/70 font-medium">Try adjusting your filters or search query.</p>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+                    {visibleItems.map((item) => (
+                      <MenuCard key={item.id} item={item} />
+                    ))}
+                  </div>
+                  {visibleCount < filteredItems.length && (
+                    <div className="flex justify-center mt-12 mb-8">
+                      <button
+                        onClick={() => setVisibleCount((prev) => prev + 20)}
+                        className="bg-[#985923] text-white px-8 py-4 rounded-xl font-bold shadow-md hover:bg-[#7D491C] transition-all hover:scale-105"
+                      >
+                        Load More Items
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </>
           )}
         </>
       )}
