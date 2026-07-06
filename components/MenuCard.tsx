@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Plus, X, Clock, Info } from "lucide-react";
+import { Plus, X, Clock, Info, Heart } from "lucide-react";
 import { MenuItem } from "@/types";
 import { useCartStore } from "@/store/cartStore";
+import { useFavoritesStore } from "@/store/favoritesStore";
 import { formatPrice, cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 
@@ -20,6 +21,13 @@ export default function MenuCard({ item, previewOnly = false }: MenuCardProps) {
   const [quantity, setQuantity] = useState(1);
   const [specialInstructions, setSpecialInstructions] = useState("");
   const addItem = useCartStore((state) => state.addItem);
+  const { toggleFavorite, isFavorite } = useFavoritesStore();
+  
+  // Need to check mounted state to avoid hydration mismatch with local storage
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const favorite = mounted ? isFavorite(item.id) : false;
 
   const handleAddToCart = () => {
     addItem(item, quantity, specialInstructions);
@@ -47,6 +55,23 @@ export default function MenuCard({ item, previewOnly = false }: MenuCardProps) {
                 No Image
               </div>
             )}
+            
+            {mounted && (
+              <button 
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(item.id); }}
+                className="absolute top-3 right-3 p-2.5 rounded-full bg-white/60 backdrop-blur-md shadow-sm border border-white/60 hover:scale-110 active:scale-95 transition-all z-10 group/fav"
+                aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
+              >
+                <Heart 
+                  size={20} 
+                  className={cn(
+                    "transition-all duration-300", 
+                    favorite ? "fill-rose-500 text-rose-500 scale-110" : "text-coffee-800 group-hover/fav:text-rose-500"
+                  )} 
+                />
+              </button>
+            )}
+
             {item.dietary_badges && item.dietary_badges.length > 0 && (
               <div className="absolute top-2 left-2 flex gap-1 flex-wrap">
                 {item.dietary_badges.map((badge) => (

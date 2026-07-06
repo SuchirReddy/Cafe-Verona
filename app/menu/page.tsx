@@ -11,14 +11,36 @@ import OrderTrackerButton from "@/components/OrderTrackerButton";
 import TableSelect from "@/components/TableSelect";
 import { Search, Filter, Coffee, ArrowUpDown, Award, Heart, ChevronLeft, ChevronRight, LayoutGrid, CupSoda, Cake, Croissant, Utensils, Leaf } from "lucide-react";
 
-const getCategoryIcon = (catName: string) => {
+const getCategoryStyle = (catName: string) => {
   const name = catName.toLowerCase();
-  if (name.includes('cold') || name.includes('iced') || name.includes('frappe') || name.includes('smoothie')) return <CupSoda className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />;
-  if (name.includes('tea') || name.includes('matcha')) return <Leaf className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />;
-  if (name.includes('pastry') || name.includes('croissant') || name.includes('bakery')) return <Croissant className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />;
-  if (name.includes('cake') || name.includes('dessert') || name.includes('sweet')) return <Cake className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />;
-  if (name.includes('food') || name.includes('sandwich') || name.includes('savory') || name.includes('breakfast')) return <Utensils className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />;
-  return <Coffee className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />;
+  
+  if (name.includes('pastry') || name.includes('pastries') || name.includes('croissant') || name.includes('bakery') || name.includes('cake') || name.includes('dessert') || name.includes('sweet')) {
+    return {
+      image: "/category_pastries.png",
+    };
+  }
+
+  if (name.includes('juice') || name.includes('smoothie')) {
+    return {
+      image: "/category_juices.png",
+    };
+  }
+
+  if (name.includes('food') || name.includes('sandwich') || name.includes('savory') || name.includes('breakfast') || name.includes('bites')) {
+    return {
+      image: "/category_foods.png",
+    };
+  }
+  
+  if (name.includes('drink') || name.includes('beverage') || name.includes('coffee') || name.includes('cold') || name.includes('tea') || name.includes('frappe') || name.includes('matcha')) {
+    return {
+      image: "/category_drinks.png",
+    };
+  }
+  
+  return {
+    image: "/category_drinks.png",
+  };
 };
 
 function MenuContent() {
@@ -116,29 +138,31 @@ function MenuContent() {
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 pt-4 pb-24 min-h-screen">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 bg-white/70 backdrop-blur-xl p-4 md:p-6 rounded-3xl shadow-sm border border-white">
-        <div>
-          <h1 className="text-4xl md:text-5xl font-bold font-serif mb-2 text-coffee-900 flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm shrink-0">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6 pt-4">
+        <div className="flex flex-col gap-2">
+          {tableNumber ? (
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#623E2A]/10 text-[#623E2A] rounded-full text-xs font-bold tracking-widest uppercase w-fit mb-2">
+              <div className="w-2 h-2 rounded-full bg-[#623E2A] animate-pulse"></div>
+              Table {tableNumber}
+            </div>
+          ) : (
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-red-600 rounded-full text-xs font-bold tracking-widest uppercase w-fit mb-2">
+              Select a table
+            </div>
+          )}
+          <h1 className="text-5xl md:text-7xl font-bold font-serif text-[#623E2A] flex items-center gap-4 tracking-tight leading-none">
+            <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden border-4 border-white shadow-md shrink-0">
               <img src="/logo.png" alt="Cafe Verona Logo" className="w-full h-full object-cover" />
             </div>
-            Our Menu
+            Menu.
           </h1>
-          <p className="text-coffee-700 text-lg">
-            {tableNumber ? `Ordering for Table ${tableNumber}` : "Please select a table to order"}
-          </p>
-          <div className="flex gap-3 mt-3">
-            <a href="/membership/lookup" className="flex items-center gap-1.5 text-sm font-bold text-coffee-900 bg-gradient-to-r from-yellow-100 to-[#E8DCCC] border border-[#D4AF37]/40 shadow-sm hover:shadow-md hover:scale-105 px-4 py-1.5 rounded-full transition-all">
-              <Award size={16} className="text-[#B8860B]" />
-              Check Membership
-            </a>
-            <a href="/favorites" className="flex items-center gap-1.5 text-sm font-bold text-coffee-900 bg-white border border-rose-200 shadow-sm hover:shadow-md hover:scale-105 hover:border-rose-300 px-4 py-1.5 rounded-full transition-all">
-              <Heart size={16} className="text-rose-500" />
-              Favorites
-            </a>
-          </div>
         </div>
+        
         <div className="flex items-center gap-4 w-full md:w-auto">
+          <a href="/membership/lookup" className="hidden md:flex items-center gap-2 text-sm font-bold text-[#623E2A] hover:bg-[#623E2A]/5 px-5 py-2.5 rounded-full transition-all border border-[#623E2A]/20">
+            <Award size={18} />
+            Membership
+          </a>
           {!tableNumber && (
             <TableSelect
               value={tableNumber}
@@ -148,8 +172,8 @@ function MenuContent() {
           )}
           <div className="hidden md:flex items-center gap-3">
             <OrderTrackerButton />
-            <a href="/favorites" className="flex items-center justify-center w-[52px] h-[52px] rounded-full bg-white border border-rose-100 shadow-sm hover:shadow-md hover:scale-105 transition-all text-rose-500" title="Favorites">
-              <Heart size={24} />
+            <a href="/favorites" className="flex items-center justify-center w-[52px] h-[52px] rounded-full bg-white border border-[#E8E2D2] shadow-sm hover:shadow-md hover:scale-105 transition-all text-coffee-800 hover:text-rose-500 hover:border-rose-200 group" title="Favorites">
+              <Heart size={22} className="transition-colors group-hover:fill-rose-50" />
             </a>
             <CartDrawer />
           </div>
@@ -242,35 +266,35 @@ function MenuContent() {
       ) : (
         <>
           {!activeCategory && !searchQuery ? (
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mt-8">
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mt-16 px-2">
               <button
                 onClick={() => setActiveCategory("all")}
-                className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl shadow-sm hover:shadow-md border border-[#E8E2D2] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0 group transition-all hover:-translate-y-1 text-left"
+                className="relative bg-[#DFBFA0] border border-[#623E2A] rounded-[2rem] p-5 pt-12 md:pt-16 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 text-left flex flex-col justify-end min-h-[160px] md:min-h-[180px] group mt-8 md:mt-12"
               >
-                <div>
-                  <LayoutGrid className="text-[#985923] mb-2 md:mb-4 w-6 h-6 md:w-8 md:h-8" />
-                  <h3 className="text-lg md:text-2xl font-bold text-[#2C331F] mb-1 group-hover:text-[#985923] transition-colors leading-tight">All Items</h3>
-                  <p className="text-[11px] md:text-sm text-[#2C331F]/60 font-medium">{items.length} {items.length === 1 ? 'Item' : 'Items'}</p>
+                <div className={`absolute -top-10 md:-top-12 left-1/2 -translate-x-1/2 w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-white/40 shadow-lg bg-[#F9F6F0] transition-transform group-hover:scale-105 duration-300`}>
+                  <img src="/category_all.png" alt="All Items" className="w-full h-full object-cover" />
                 </div>
-                <div className="w-8 h-8 md:w-12 md:h-12 bg-[#FAF8F3] rounded-full flex items-center justify-center border border-[#E8E2D2] group-hover:bg-[#985923] group-hover:text-white transition-colors text-[#985923] self-end md:self-auto mt-auto md:mt-0">
-                  <ChevronRight size={16} className="md:w-6 md:h-6" />
+                <div className="flex justify-between items-end w-full mt-4">
+                  <h3 className="text-lg md:text-2xl font-medium text-[#623E2A] leading-tight tracking-tight">All Items</h3>
+                  <span className="bg-[#623E2A] text-[#DFBFA0] text-[10px] md:text-xs px-3 md:px-4 py-1 md:py-1.5 rounded-full font-medium tracking-wide shadow-sm group-hover:bg-[#4A2E1F] transition-colors">Show</span>
                 </div>
               </button>
               {categories.map((cat) => {
-                const itemCount = items.filter(i => i.category_id === cat.id).length;
+                const style = getCategoryStyle(cat.name);
                 return (
                   <button
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
-                    className="bg-white p-5 md:p-8 rounded-2xl md:rounded-3xl shadow-sm hover:shadow-md border border-[#E8E2D2] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0 group transition-all hover:-translate-y-1 text-left"
+                    className="relative bg-[#DFBFA0] border border-[#623E2A] rounded-[2rem] p-5 pt-12 md:pt-16 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 text-left flex flex-col justify-end min-h-[160px] md:min-h-[180px] group mt-8 md:mt-12"
                   >
-                    <div>
-                      {getCategoryIcon(cat.name)}
-                      <h3 className="text-lg md:text-2xl font-bold text-[#2C331F] mb-1 group-hover:text-[#985923] transition-colors leading-tight">{cat.name}</h3>
-                      <p className="text-[11px] md:text-sm text-[#2C331F]/60 font-medium">{itemCount} {itemCount === 1 ? 'Item' : 'Items'}</p>
+                    <div className={`absolute -top-10 md:-top-12 left-1/2 -translate-x-1/2 w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-white/40 shadow-lg bg-[#F9F6F0] transition-transform group-hover:scale-105 duration-300`}>
+                      <img src={style.image} alt={cat.name} className="w-full h-full object-cover" />
                     </div>
-                    <div className="w-8 h-8 md:w-12 md:h-12 bg-[#FAF8F3] rounded-full flex items-center justify-center border border-[#E8E2D2] group-hover:bg-[#985923] group-hover:text-white transition-colors text-[#985923] self-end md:self-auto mt-auto md:mt-0">
-                      <ChevronRight size={16} className="md:w-6 md:h-6" />
+                    <div className="flex justify-between items-end w-full mt-4">
+                      <div>
+                        <h3 className="text-lg md:text-2xl font-medium text-[#623E2A] leading-tight tracking-tight">{cat.name}</h3>
+                      </div>
+                      <span className="bg-[#623E2A] text-[#DFBFA0] text-[10px] md:text-xs px-3 md:px-4 py-1 md:py-1.5 rounded-full font-medium tracking-wide shadow-sm group-hover:bg-[#4A2E1F] transition-colors">Show</span>
                     </div>
                   </button>
                 );
