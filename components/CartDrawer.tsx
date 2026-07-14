@@ -201,10 +201,10 @@ export default function CartDrawer() {
   return (
     <Drawer.Root direction="right" open={isOpen} onOpenChange={setIsOpen}>
       <Drawer.Trigger asChild>
-        <button className="relative bg-coffee-800 text-cream p-3 rounded-full hover:bg-coffee-900 transition-colors shadow-lg">
-          <ShoppingBag size={24} />
+        <button className="relative flex items-center justify-center w-12 h-12 sm:w-[52px] sm:h-[52px] bg-[#623E2A] text-[#F9F6F0] rounded-full hover:bg-[#4A2E1F] transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 group shrink-0">
+          <ShoppingBag size={22} className="transition-transform group-hover:scale-105" />
           {isMounted && itemCount > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 flex items-center justify-center rounded-full font-bold">
+            <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[11px] w-6 h-6 flex items-center justify-center rounded-full font-bold shadow-sm border-2 border-white">
               {itemCount}
             </span>
           )}

@@ -172,25 +172,34 @@ function MenuContent() {
           )}
           <div className="hidden md:flex items-center gap-3">
             <OrderTrackerButton />
-            <a href="/favorites" className="flex items-center justify-center w-[52px] h-[52px] rounded-full bg-white border border-[#E8E2D2] shadow-sm hover:shadow-md hover:scale-105 transition-all text-coffee-800 hover:text-rose-500 hover:border-rose-200 group" title="Favorites">
-              <Heart size={22} className="transition-colors group-hover:fill-rose-50" />
+            <a href="/favorites" className="flex items-center justify-center w-[52px] h-[52px] rounded-full bg-white border border-[#E8E2D2] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-[#623E2A] hover:bg-[#F9F6F0] hover:text-rose-500 hover:border-[#DFBFA0] group shrink-0" title="Favorites">
+              <Heart size={22} className="transition-all group-hover:scale-105 group-hover:fill-rose-50" />
             </a>
             <CartDrawer />
           </div>
         </div>
       </header>
 
-      {/* Mobile floating bar */}
-      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between w-[92vw] max-w-md bg-white/80 backdrop-blur-xl border border-white shadow-2xl rounded-full p-3 px-6 transition-all">
-        <OrderTrackerButton />
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ml-4 md:ml-6 w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-xl bg-cream z-10 flex items-center justify-center">
-          <img src="/logo.png" alt="Cafe Verona" className="w-full h-full object-cover" />
+      {/* Mobile floating container */}
+      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 w-[94vw] max-w-md">
+        {/* The bar */}
+        <div className="flex-1 flex items-center justify-center bg-white/90 backdrop-blur-xl border border-white shadow-xl rounded-full p-2 transition-all">
+          <OrderTrackerButton />
+          
+          {/* Vertical line with increased spacing */}
+          <div className="w-[2px] h-8 bg-coffee-200/50 rounded-full mx-8 sm:mx-12"></div>
+          
+          <div className="flex items-center gap-6 sm:gap-8">
+            <a href="/favorites" className="flex items-center justify-center w-12 h-12 rounded-full bg-white border border-[#E8E2D2] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-[#623E2A] hover:bg-[#F9F6F0] hover:text-rose-500 hover:border-[#DFBFA0] shrink-0 group">
+              <Heart size={22} className="transition-all group-hover:scale-105 group-hover:fill-rose-50" />
+            </a>
+            <CartDrawer />
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <a href="/favorites" className="flex items-center justify-center w-12 h-12 rounded-full bg-white border border-rose-100 shadow-sm hover:scale-105 transition-all text-rose-500">
-            <Heart size={22} />
-          </a>
-          <CartDrawer />
+
+        {/* Logo outside */}
+        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-lg bg-cream shrink-0 flex items-center justify-center transition-all hover:scale-105">
+          <img src="/logo.png" alt="Cafe Verona" className="w-full h-full object-cover" />
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { createClient } from "@/lib/supabase/client";
 import { useCartStore } from "@/store/cartStore";
 import { Clock, Truck, Search, X } from "lucide-react";
@@ -14,7 +15,12 @@ export default function OrderTrackerButton() {
   const supabase = createClient();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -107,24 +113,24 @@ export default function OrderTrackerButton() {
           <Link 
             key={activeOrder.id}
             href={`/order/status?id=${activeOrder.id}`}
-            className="font-bold py-3 px-5 rounded-2xl flex items-center gap-2 transition-all shadow-md hover:shadow-lg animate-pulse border bg-amber-100 text-amber-700 hover:bg-amber-200 border-amber-300"
+            className="font-bold py-3 px-5 sm:py-3.5 sm:px-6 rounded-full flex items-center gap-2 transition-all shadow-sm hover:shadow-md border border-[#E8E2D2] bg-amber-50 text-amber-700 hover:bg-amber-100 hover:border-amber-200 hover:-translate-y-0.5 group shrink-0"
           >
-            <Clock size={20} className="animate-spin-slow" />
-            <span className="hidden sm:inline">Track Order</span>
+            <Clock size={20} className="animate-spin-slow group-hover:text-amber-800" />
+            <span className="hidden sm:inline tracking-wide text-sm">Track Order</span>
           </Link>
         ))}
 
         <button 
           onClick={() => setIsOpen(true)}
-          className="font-bold py-3 px-4 rounded-2xl flex items-center gap-2 transition-all shadow-sm hover:shadow-md border bg-white border-[#E8E2D2] text-coffee-800 hover:bg-coffee-50"
+          className="font-bold w-12 h-12 sm:w-auto sm:py-3.5 sm:px-6 rounded-full flex items-center justify-center sm:justify-start gap-2 transition-all shadow-sm hover:shadow-md border bg-white border-[#E8E2D2] text-[#623E2A] hover:bg-[#F9F6F0] hover:border-[#DFBFA0] hover:-translate-y-0.5 group shrink-0"
         >
-          <Truck size={20} />
-          <span className="hidden sm:inline">Track Delivery</span>
+          <Truck size={22} className="transition-transform group-hover:scale-105" />
+          <span className="hidden sm:inline tracking-wide text-sm">Track Delivery</span>
         </button>
       </div>
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+      {isOpen && mounted && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
           <div className="bg-white p-6 rounded-3xl w-full max-w-sm shadow-xl relative animate-in fade-in zoom-in duration-200">
             <button 
               onClick={() => setIsOpen(false)}
@@ -155,7 +161,8 @@ export default function OrderTrackerButton() {
               </button>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
