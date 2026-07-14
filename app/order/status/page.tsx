@@ -3,11 +3,15 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Order } from "@/types";
+import { Order, OrderItem, MenuItem } from "@/types";
 import { format } from "date-fns";
 import { Coffee, CheckCircle2, Clock, ChefHat, Check, MapPin, Star, Send } from "lucide-react";
-import { formatOrderNumber } from "@/lib/utils";
+import { formatOrderNumber, formatPrice } from "@/lib/utils";
 import toast from "react-hot-toast";
+
+type OrderWithItems = Order & {
+  order_items: (OrderItem & { menu_items: MenuItem })[];
+};
 
 const STATUS_STEPS = ["pending", "preparing", "served", "completed"];
 
@@ -17,7 +21,7 @@ function StatusContent() {
   const router = useRouter();
   const supabase = createClient();
 
-  const [order, setOrder] = useState<Order | null>(null);
+  const [order, setOrder] = useState<OrderWithItems | null>(null);
   const [loading, setLoading] = useState(true);
   
   // Feedback state
@@ -36,12 +40,18 @@ function StatusContent() {
     const fetchOrder = async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("*")
+        .select(`
+          *,
+          order_items (
+            *,
+            menu_items (*)
+          )
+        `)
         .eq("id", orderId)
         .single();
 
       if (!error && data) {
-        setOrder(data);
+        setOrder(data as OrderWithItems);
       }
       setLoading(false);
     };
@@ -60,7 +70,7 @@ function StatusContent() {
           filter: `id=eq.${orderId}`,
         },
         (payload) => {
-          setOrder(payload.new as Order);
+          setOrder((prev) => prev ? { ...prev, ...(payload.new as Order) } : payload.new as any);
           if (payload.new.status === "served") {
             toast.success("Your order is served! Enjoy!");
           }
@@ -194,6 +204,64 @@ function StatusContent() {
             {order.status === "served" && "We hope you enjoy it!"}
           </p>
         </div>
+
+        {/* Order Items Summary */}
+        {order.order_items && order.order_items.length > 0 && (
+          <div className="mt-2 bg-white/50 rounded-2xl p-6 border border-coffee-100">
+            <h3 className="font-bold text-lg mb-4 text-coffee-900 flex items-center justify-between">
+              <span>Your Items</span>
+              <span className="text-sm font-normal text-coffee-500">{order.order_items.length} items</span>
+            </h3>
+            <ul className="space-y-4">
+              {order.order_items.map((item) => (
+                <li key={item.id} className="flex justify-between text-sm">
+                  <div className="flex-1">
+                    <div className="flex items-start gap-2">
+                      <span className="font-bold text-coffee-900 min-w-[24px]">{item.quantity}x</span>
+                      <span className="font-medium text-coffee-800">{item.menu_items?.name || "Unknown Item"}</span>
+                    </div>
+                    {item.special_requests && (
+                      <p className="text-xs text-coffee-500 italic mt-1 ml-8">Note: {item.special_requests}</p>
+                    )}
+                  </div>
+                  <span className="text-coffee-700 font-medium ml-4 whitespace-nowrap">
+                    {formatPrice(item.unit_price * item.quantity)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {(() => {
+              const subtotal = order.order_items.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
+              const deliveryFee = order.order_type === 'delivery' ? (order.delivery_fee ?? 0) : 0;
+              const discount = (subtotal + deliveryFee) - order.total_amount;
+
+              return (
+                <div className="mt-4 pt-4 border-t border-coffee-200 space-y-2">
+                  <div className="flex justify-between items-center text-sm text-coffee-700">
+                    <span>Subtotal</span>
+                    <span>{formatPrice(subtotal)}</span>
+                  </div>
+                  {deliveryFee > 0 && (
+                    <div className="flex justify-between items-center text-sm text-coffee-700">
+                      <span>Delivery Fee</span>
+                      <span>{formatPrice(deliveryFee)}</span>
+                    </div>
+                  )}
+                  {discount > 0.01 && (
+                    <div className="flex justify-between items-center text-sm text-green-600 font-medium">
+                      <span>Discount Applied</span>
+                      <span>-{formatPrice(discount)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center font-bold text-coffee-900 pt-2 border-t border-coffee-100">
+                    <span>Total</span>
+                    <span>{formatPrice(order.total_amount)}</span>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        )}
       </div>
 
       {/* Feedback Widget */}

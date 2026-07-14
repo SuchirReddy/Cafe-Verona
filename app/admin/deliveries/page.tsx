@@ -43,6 +43,8 @@ export default function AdminDeliveriesPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("active"); // active, completed, all
   const [searchQuery, setSearchQuery] = useState("");
+  const [preparingOrderId, setPreparingOrderId] = useState<string | null>(null);
+  const [prepTime, setPrepTime] = useState("15");
 
   const supabase = createClient();
 
@@ -88,12 +90,16 @@ export default function AdminDeliveriesPage() {
     }
   };
 
-  const updateStatus = async (id: string, newStatus: string) => {
+  const updateStatus = async (id: string, newStatus: string, estimatedReadyTime?: string) => {
     try {
+      const bodyPayload: any = { status: newStatus };
+      if (estimatedReadyTime) {
+        bodyPayload.estimated_ready_time = estimatedReadyTime;
+      }
       const res = await fetch(`/api/orders/${id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify(bodyPayload),
       });
 
       if (!res.ok) throw new Error("Failed to update status");
@@ -251,7 +257,7 @@ export default function AdminDeliveriesPage() {
 
                 <div className="flex gap-2">
                   {order.status === 'pending' && (
-                    <button onClick={() => updateStatus(order.id, 'preparing')} className="px-5 py-2 bg-amber-600 text-white rounded-lg text-sm font-bold hover:bg-amber-700 transition-colors">
+                    <button onClick={() => setPreparingOrderId(order.id)} className="px-5 py-2 bg-amber-600 text-white rounded-lg text-sm font-bold hover:bg-amber-700 transition-colors">
                       Start Preparing
                     </button>
                   )}
@@ -269,6 +275,48 @@ export default function AdminDeliveriesPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Preparation Time Modal */}
+      {preparingOrderId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm pointer-events-auto">
+          <div className="bg-white p-6 rounded-3xl w-full max-w-sm shadow-xl relative animate-in fade-in zoom-in duration-200">
+            <h3 className="text-xl font-bold font-serif text-coffee-900 mb-2">Set Preparation Time</h3>
+            <p className="text-sm text-coffee-600 mb-4">Enter estimated preparation time in minutes.</p>
+            <input
+              type="number"
+              value={prepTime}
+              onChange={(e) => setPrepTime(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-coffee-200 focus:outline-none focus:ring-2 focus:ring-coffee-500 mb-4 bg-coffee-50"
+              autoFocus
+              min="1"
+            />
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setPreparingOrderId(null)} 
+                className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  if (!preparingOrderId) return;
+                  const minutes = parseInt(prepTime, 10);
+                  if (!isNaN(minutes) && minutes > 0) {
+                    const estimatedReadyTime = new Date(Date.now() + minutes * 60000).toISOString();
+                    updateStatus(preparingOrderId, 'preparing', estimatedReadyTime);
+                    setPreparingOrderId(null);
+                  } else {
+                    toast.error("Invalid time entered.");
+                  }
+                }} 
+                className="flex-1 py-3 bg-amber-600 text-white rounded-xl font-bold hover:bg-amber-700 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

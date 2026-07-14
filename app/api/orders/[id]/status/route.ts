@@ -8,7 +8,7 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { status } = body;
+    const { status, estimated_ready_time } = body;
 
     if (!status || !['pending', 'preparing', 'served', 'completed'].includes(status)) {
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
@@ -16,9 +16,14 @@ export async function PATCH(
 
     const supabase = createAdminClient();
     
+    const updateData: any = { status };
+    if (estimated_ready_time !== undefined) {
+      updateData.estimated_ready_time = estimated_ready_time;
+    }
+
     const { data, error } = await supabase
       .from('orders')
-      .update({ status })
+      .update(updateData)
       .eq('id', id)
       .select()
       .single();

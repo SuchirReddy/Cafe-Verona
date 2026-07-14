@@ -2,13 +2,53 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Coffee, QrCode, Timer, Gift, Star, ArrowRight, Menu, X, MapPin, Phone, Mail } from "lucide-react";
+import { Coffee, QrCode, Timer, Gift, Star, ArrowRight, Menu, X, MapPin, Phone, Mail, Truck, Search } from "lucide-react";
 import { MenuItem } from "@/types";
 import MenuCard from "@/components/MenuCard";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LandingPageClient({ popularItems }: { popularItems: MenuItem[] }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isTrackModalOpen, setIsTrackModalOpen] = useState(false);
+  const [trackOrderNumber, setTrackOrderNumber] = useState("");
+  const [trackLoading, setTrackLoading] = useState(false);
+  const [trackError, setTrackError] = useState("");
+  const router = useRouter();
+  const supabase = createClient();
+
+  const handleTrack = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTrackError("");
+    
+    if (!trackOrderNumber.trim()) {
+      setTrackError("Please enter an order number");
+      return;
+    }
+
+    setTrackLoading(true);
+    let query = supabase.from("orders").select("id").order("created_at", { ascending: false }).limit(1);
+    
+    const parts = trackOrderNumber.split("-");
+    const serial = parseInt(parts.length === 3 ? parts[2] : trackOrderNumber, 10);
+    
+    if (!isNaN(serial)) {
+      query = query.eq("order_number", serial);
+    } else {
+      query = query.ilike("id", `${trackOrderNumber}%`);
+    }
+
+    const { data } = await query;
+    
+    if (data && data.length > 0) {
+      setIsTrackModalOpen(false);
+      router.push(`/order/status?id=${data[0].id}`);
+    } else {
+      setTrackError("Order not found.");
+      setTrackLoading(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -327,6 +367,48 @@ export default function LandingPageClient({ popularItems }: { popularItems: Menu
         </div>
       </section>
 
+      {/* Home Delivery Section */}
+      <section className="py-24 bg-coffee-900 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center gap-16">
+          <div className="flex-1 text-center md:text-left">
+            <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-8 mx-auto md:mx-0 border border-white/20">
+              <Truck className="text-amber-400" size={32} />
+            </div>
+            <h2 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tighter mb-6">
+              Cafe Veřona,<br /> Delivered to You.
+            </h2>
+            <p className="text-lg md:text-xl text-white/80 font-medium leading-relaxed mb-10 max-w-lg mx-auto md:mx-0">
+              Enjoy our artisan coffee and delectable pastries from the comfort of your home. Fast, fresh, and perfectly packaged.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
+              <Link href="/menu" className="w-full sm:w-auto bg-amber-500 text-coffee-900 px-8 py-4 rounded-xl font-bold text-sm tracking-widest hover:bg-amber-400 transition-all shadow-md text-center">
+                BROWSE MENU
+              </Link>
+              <button onClick={() => setIsTrackModalOpen(true)} className="w-full sm:w-auto bg-transparent border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-sm tracking-widest hover:bg-white/10 transition-all text-center">
+                TRACK ORDER
+              </button>
+            </div>
+          </div>
+          <div className="flex-1 w-full max-w-md relative">
+            <div className="aspect-square rounded-[3rem] overflow-hidden shadow-2xl relative border-4 border-white/10">
+              <img src="/hero_pastries.png" alt="Delivery Packaging" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div className="absolute bottom-8 left-8 right-8 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center text-coffee-900 font-bold">
+                    <Timer size={24} />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold">Fast Delivery</p>
+                    <p className="text-white/70 text-sm">Under 30 minutes</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <section id="testimonials" className="py-24 bg-[#E8DCCC]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -432,11 +514,46 @@ export default function LandingPageClient({ popularItems }: { popularItems: Menu
         </div>
       </footer>
       {/* Mobile Floating Menu Button */}
-      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40 pointer-events-auto">
         <Link href="/menu" className="flex items-center gap-2 px-8 py-3.5 bg-[#985923] text-white rounded-full shadow-2xl shadow-[#985923]/30 hover:scale-105 transition-transform font-bold tracking-widest text-sm border border-white/20">
           <Menu size={18} /> MENU
         </Link>
       </div>
+
+      {isTrackModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm pointer-events-auto">
+          <div className="bg-white p-6 rounded-3xl w-full max-w-sm shadow-xl relative animate-in fade-in zoom-in duration-200">
+            <button 
+              onClick={() => setIsTrackModalOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-gray-50 rounded-full p-2"
+            >
+              <X size={20} />
+            </button>
+            <h3 className="text-xl font-bold font-serif text-coffee-900 mb-4">Track Delivery</h3>
+            <form onSubmit={handleTrack} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-coffee-800 mb-1">Order Number</label>
+                <input
+                  type="text"
+                  value={trackOrderNumber}
+                  onChange={(e) => setTrackOrderNumber(e.target.value)}
+                  placeholder="e.g. 2026-07-0042 or 42"
+                  className="w-full px-4 py-3 rounded-xl border border-coffee-200 focus:outline-none focus:ring-2 focus:ring-coffee-500 bg-coffee-50"
+                  autoFocus
+                />
+              </div>
+              {trackError && <p className="text-red-500 text-sm font-medium">{trackError}</p>}
+              <button
+                type="submit"
+                disabled={trackLoading}
+                className="w-full bg-coffee-800 text-cream py-3 rounded-xl font-bold hover:bg-coffee-900 transition-colors flex justify-center items-center gap-2"
+              >
+                {trackLoading ? "Searching..." : <><Search size={18} /> Track</>}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
