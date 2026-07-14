@@ -9,11 +9,11 @@ import MenuCard from "@/components/MenuCard";
 import CartDrawer from "@/components/CartDrawer";
 import OrderTrackerButton from "@/components/OrderTrackerButton";
 import TableSelect from "@/components/TableSelect";
-import { Search, Filter, Coffee, ArrowUpDown, Award, Heart, ChevronLeft, ChevronRight, LayoutGrid, CupSoda, Cake, Croissant, Utensils, Leaf } from "lucide-react";
+import { Search, Filter, Coffee, ArrowUpDown, Award, Heart, ChevronLeft, ChevronRight, LayoutGrid, CupSoda, Cake, Croissant, Utensils, Leaf, ArrowRight } from "lucide-react";
 
 const getCategoryStyle = (catName: string) => {
   const name = catName.toLowerCase();
-  
+
   if (name.includes('pastry') || name.includes('pastries') || name.includes('croissant') || name.includes('bakery') || name.includes('cake') || name.includes('dessert') || name.includes('sweet')) {
     return {
       image: "/category_pastries.png",
@@ -31,13 +31,13 @@ const getCategoryStyle = (catName: string) => {
       image: "/category_foods.png",
     };
   }
-  
+
   if (name.includes('drink') || name.includes('beverage') || name.includes('coffee') || name.includes('cold') || name.includes('tea') || name.includes('frappe') || name.includes('matcha')) {
     return {
       image: "/category_drinks.png",
     };
   }
-  
+
   return {
     image: "/category_drinks.png",
   };
@@ -157,7 +157,7 @@ function MenuContent() {
             Menu.
           </h1>
         </div>
-        
+
         <div className="flex items-center gap-4 w-full md:w-auto">
           <a href="/membership/lookup" className="hidden md:flex items-center gap-2 text-sm font-bold text-[#623E2A] hover:bg-[#623E2A]/5 px-5 py-2.5 rounded-full transition-all border border-[#623E2A]/20">
             <Award size={18} />
@@ -185,10 +185,10 @@ function MenuContent() {
         {/* The bar */}
         <div className="flex-1 flex items-center justify-center bg-white/90 backdrop-blur-xl border border-white shadow-xl rounded-full p-2 transition-all">
           <OrderTrackerButton />
-          
+
           {/* Vertical line with increased spacing */}
           <div className="w-[2px] h-8 bg-coffee-200/50 rounded-full mx-8 sm:mx-12"></div>
-          
+
           <div className="flex items-center gap-6 sm:gap-8">
             <a href="/favorites" className="flex items-center justify-center w-12 h-12 rounded-full bg-white border border-[#E8E2D2] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all text-[#623E2A] hover:bg-[#F9F6F0] hover:text-rose-500 hover:border-[#DFBFA0] shrink-0 group">
               <Heart size={22} className="transition-all group-hover:scale-105 group-hover:fill-rose-50" />
@@ -284,8 +284,8 @@ function MenuContent() {
                   <img src="/category_all.png" alt="All Items" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex justify-between items-end w-full mt-4">
-                  <h3 className="text-lg md:text-2xl font-medium text-[#623E2A] leading-tight tracking-tight">All Items</h3>
-                  <span className="bg-[#623E2A] text-[#DFBFA0] text-[10px] md:text-xs px-3 md:px-4 py-1 md:py-1.5 rounded-full font-medium tracking-wide shadow-sm group-hover:bg-[#4A2E1F] transition-colors">Show</span>
+                  <h3 className="text-base md:text-xl font-medium text-[#623E2A] leading-tight tracking-tight">All Items</h3>
+                  <span className="shrink-0 bg-[#623E2A] text-[#DFBFA0] p-1.5 md:p-2 rounded-full shadow-sm group-hover:bg-[#4A2E1F] transition-colors translate-y-1"><ArrowRight className="w-4 h-4 md:w-5 md:h-5" /></span>
                 </div>
               </button>
               {categories.map((cat) => {
@@ -299,11 +299,11 @@ function MenuContent() {
                     <div className={`absolute -top-10 md:-top-12 left-1/2 -translate-x-1/2 w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-white/40 shadow-lg bg-[#F9F6F0] transition-transform group-hover:scale-105 duration-300`}>
                       <img src={style.image} alt={cat.name} className="w-full h-full object-cover" />
                     </div>
-                    <div className="flex justify-between items-end w-full mt-4">
+                    <div className="flex justify-between items-end w-full mt-4 gap-2">
                       <div>
-                        <h3 className="text-lg md:text-2xl font-medium text-[#623E2A] leading-tight tracking-tight">{cat.name}</h3>
+                        <h3 className="text-base md:text-xl font-medium text-[#623E2A] leading-tight tracking-tight">{cat.name}</h3>
                       </div>
-                      <span className="bg-[#623E2A] text-[#DFBFA0] text-[10px] md:text-xs px-3 md:px-4 py-1 md:py-1.5 rounded-full font-medium tracking-wide shadow-sm group-hover:bg-[#4A2E1F] transition-colors">Show</span>
+                      <span className="shrink-0 bg-[#623E2A] text-[#DFBFA0] p-1.5 md:p-2 rounded-full shadow-sm group-hover:bg-[#4A2E1F] transition-colors translate-y-1"><ArrowRight className="w-4 h-4 md:w-5 md:h-5" /></span>
                     </div>
                   </button>
                 );
@@ -323,8 +323,8 @@ function MenuContent() {
                   <button
                     onClick={() => setActiveCategory("all")}
                     className={`px-6 py-2.5 rounded-full whitespace-nowrap font-bold transition-all border ${activeCategory === "all"
-                        ? "bg-[#985923] text-white border-transparent shadow-md"
-                        : "bg-white border-[#E8E2D2] text-[#2C331F] hover:bg-black/5 shadow-sm"
+                      ? "bg-[#985923] text-white border-transparent shadow-md"
+                      : "bg-white border-[#E8E2D2] text-[#2C331F] hover:bg-black/5 shadow-sm"
                       }`}
                   >
                     All Items
@@ -334,8 +334,8 @@ function MenuContent() {
                       key={cat.id}
                       onClick={() => setActiveCategory(cat.id)}
                       className={`px-6 py-2.5 rounded-full whitespace-nowrap font-bold transition-all border ${activeCategory === cat.id
-                          ? "bg-[#985923] text-white border-transparent shadow-md"
-                          : "bg-white border-[#E8E2D2] text-[#2C331F] hover:bg-black/5 shadow-sm"
+                        ? "bg-[#985923] text-white border-transparent shadow-md"
+                        : "bg-white border-[#E8E2D2] text-[#2C331F] hover:bg-black/5 shadow-sm"
                         }`}
                     >
                       {cat.name}
@@ -347,7 +347,7 @@ function MenuContent() {
                 <div className="mb-8 mt-4 flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-[#2C331F]">Search Results for "{searchQuery}"</h2>
                   {activeCategory && (
-                     <button
+                    <button
                       onClick={() => setActiveCategory(null)}
                       className="text-sm font-bold text-[#985923] hover:underline"
                     >
@@ -356,7 +356,7 @@ function MenuContent() {
                   )}
                 </div>
               )}
-              
+
               {filteredItems.length === 0 ? (
                 <div className="text-center py-20 bg-white/40 rounded-3xl border border-white/60 shadow-sm mt-8">
                   <Coffee className="mx-auto text-coffee-300 mb-4" size={48} />
