@@ -14,8 +14,18 @@ drop table if exists orders cascade;
 drop table if exists menu_items cascade;
 drop table if exists menu_categories cascade;
 drop table if exists tables cascade;
+drop table if exists expenses cascade;
 
 -- Create tables
+create table expenses (
+  id uuid primary key default uuid_generate_v4(),
+  expense_type text not null check (expense_type in ('salary', 'supplies', 'maintenance', 'other')),
+  description text not null,
+  amount numeric not null,
+  expense_date timestamptz not null default now(),
+  created_at timestamptz default now()
+);
+
 create table tables (
   id uuid primary key default uuid_generate_v4(),
   table_number int unique not null,
@@ -133,6 +143,7 @@ alter table menu_categories enable row level security;
 alter table menu_items enable row level security;
 alter table orders enable row level security;
 alter table order_items enable row level security;
+alter table expenses enable row level security;
 
 -- Public read access
 create policy "Allow public read on tables" on tables for select using (true);
@@ -140,11 +151,13 @@ create policy "Allow public read on menu_categories" on menu_categories for sele
 create policy "Allow public read on menu_items" on menu_items for select using (true);
 create policy "Allow public read on orders" on orders for select using (true);
 create policy "Allow public read on order_items" on order_items for select using (true);
+create policy "Allow public read on expenses" on expenses for select using (true);
 
 -- Public insert access for orders and order_items
 create policy "Allow public insert on orders" on orders for insert with check (true);
 create policy "Allow public update on orders" on orders for update using (true);
 create policy "Allow public insert on order_items" on order_items for insert with check (true);
+create policy "Allow public insert on expenses" on expenses for insert with check (true);
 
 -- Stored procedure for inventory deduction
 create or replace function deduct_inventory(inv_id uuid, qty numeric)

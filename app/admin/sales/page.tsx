@@ -11,7 +11,7 @@ import { TrendingUp, ShoppingBag, DollarSign } from "lucide-react";
 export default function AdminSalesPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [period, setPeriod] = useState<"today" | "week" | "month" | "all">("today");
+  const [period, setPeriod] = useState<"today" | "week" | "month" | "all">("all");
 
   const COLORS = ['#65432d', '#99643d', '#c59b5f', '#d2b47e', '#556B2F'];
 

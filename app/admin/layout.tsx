@@ -20,7 +20,8 @@ import {
   ChefHat,
   LayoutGrid,
   MonitorSmartphone,
-  LogOut
+  LogOut,
+  Receipt
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -89,6 +90,7 @@ export default function AdminLayout({
       title: "Business",
       links: [
         { name: "Sales & Analytics", href: "/admin/sales", icon: TrendingUp },
+        { name: "Expenses", href: "/admin/expenses", icon: Receipt },
         { name: "Discounts", href: "/admin/discounts", icon: Tag },
       ]
     },
