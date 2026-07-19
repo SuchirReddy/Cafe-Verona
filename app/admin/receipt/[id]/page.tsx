@@ -55,13 +55,15 @@ export default function ReceiptPage({ params }: { params: Promise<{ id: string }
       const margin = 20;
       let y = 20;
 
+      const safePrice = (amount: number) => `Rs. ${amount.toFixed(2)}`;
+
       // Fonts & Colors
       doc.setFont("helvetica", "bold");
       doc.setTextColor(101, 67, 45); // Coffee brown
 
       // Header
       doc.setFontSize(24);
-      doc.text("Cafe Veřona", 105, y, { align: "center" });
+      doc.text("Cafe Verona", 105, y, { align: "center" });
       y += 10;
       
       doc.setFontSize(12);
@@ -109,8 +111,10 @@ export default function ReceiptPage({ params }: { params: Promise<{ id: string }
       doc.setFont("helvetica", "normal");
       order.order_items.forEach((item) => {
         doc.text(item.quantity.toString(), margin, y);
-        doc.text(item.menu_items?.name || "Unknown Item", margin + 15, y);
-        doc.text(formatPrice(item.unit_price * item.quantity), 190, y, { align: "right" });
+        // Ensure menu item name doesn't contain unrenderable characters, though mostly safe
+        const itemName = item.menu_items?.name ? item.menu_items.name.replace('ř', 'r') : "Unknown Item";
+        doc.text(itemName, margin + 15, y);
+        doc.text(safePrice(item.unit_price * item.quantity), 190, y, { align: "right" });
         y += 6;
         
         if (item.special_requests || item.assigned_person) {
@@ -134,7 +138,9 @@ export default function ReceiptPage({ params }: { params: Promise<{ id: string }
       if (order.special_instructions) {
         doc.setFontSize(10);
         doc.setTextColor(100, 100, 100);
-        doc.text(`Order Notes: ${order.special_instructions}`, margin, y);
+        // basic wrapping or just truncate to avoid PDF errors for long strings
+        const safeInstructions = order.special_instructions.substring(0, 80);
+        doc.text(`Order Notes: ${safeInstructions}`, margin, y);
         y += 10;
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
@@ -143,7 +149,7 @@ export default function ReceiptPage({ params }: { params: Promise<{ id: string }
       // Total
       if (order.delivery_fee && order.delivery_fee > 0) {
         doc.text("Delivery Fee", 20, y);
-        doc.text(formatPrice(order.delivery_fee), 190, y, { align: "right" });
+        doc.text(safePrice(order.delivery_fee), 190, y, { align: "right" });
         y += 8;
       }
 
@@ -151,7 +157,7 @@ export default function ReceiptPage({ params }: { params: Promise<{ id: string }
       y += 8;
       doc.setFont("helvetica", "bold");
       doc.text("Total Amount", 20, y);
-      doc.text(formatPrice(order.total_amount), 190, y, { align: "right" });
+      doc.text(safePrice(order.total_amount), 190, y, { align: "right" });
 
       // Footer
       y += 30;

@@ -31,8 +31,12 @@ export default function AdminOrdersPage() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
-        () => {
-          fetchOrders(); // Re-fetch on any order change
+        (payload) => {
+          if (payload.eventType === 'UPDATE') {
+            setOrders(prev => prev.map(o => o.id === payload.new.id ? { ...o, ...payload.new } : o));
+          } else {
+            fetchOrders();
+          }
         }
       )
       .subscribe();
@@ -254,6 +258,12 @@ export default function AdminOrdersPage() {
                 {order.status === 'served' && (
                   <button onClick={() => updateStatus(order.id, 'completed')} className="w-full py-2.5 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors">
                     Complete Order
+                  </button>
+                )}
+
+                {order.status === 'completed' && (
+                  <button disabled className="w-full py-2.5 bg-gray-200 text-gray-500 rounded-xl font-medium cursor-not-allowed">
+                    Completed
                   </button>
                 )}
 

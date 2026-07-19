@@ -56,8 +56,12 @@ export default function AdminDeliveriesPage() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
-        () => {
-          fetchOrders();
+        (payload) => {
+          if (payload.eventType === 'UPDATE') {
+            setOrders(prev => prev.map(o => o.id === payload.new.id ? { ...o, ...payload.new } : o));
+          } else {
+            fetchOrders();
+          }
         }
       )
       .subscribe();

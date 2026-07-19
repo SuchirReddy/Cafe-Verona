@@ -15,6 +15,8 @@ export default function KitchenDisplayPage() {
   const [orders, setOrders] = useState<OrderWithItems[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
+  const [preparingOrderId, setPreparingOrderId] = useState<string | null>(null);
+  const [prepTime, setPrepTime] = useState("15");
 
   const supabase = createClient();
 
@@ -27,8 +29,16 @@ export default function KitchenDisplayPage() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
-        () => {
-          fetchOrders();
+        (payload) => {
+          if (payload.eventType === 'UPDATE') {
+            if (payload.new.status === 'served' || payload.new.status === 'completed') {
+              setOrders(prev => prev.filter(o => o.id !== payload.new.id));
+            } else {
+              setOrders(prev => prev.map(o => o.id === payload.new.id ? { ...o, ...payload.new } : o));
+            }
+          } else {
+            fetchOrders();
+          }
         }
       )
       .subscribe();
@@ -64,12 +74,16 @@ export default function KitchenDisplayPage() {
     }
   };
 
-  const updateStatus = async (id: string, newStatus: string) => {
+  const updateStatus = async (id: string, newStatus: string, estimatedReadyTime?: string) => {
     try {
+      const bodyPayload: any = { status: newStatus };
+      if (estimatedReadyTime) {
+        bodyPayload.estimated_ready_time = estimatedReadyTime;
+      }
       const res = await fetch(`/api/orders/${id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify(bodyPayload),
       });
 
       if (!res.ok) throw new Error("Failed to update status");
@@ -158,7 +172,7 @@ export default function KitchenDisplayPage() {
         <div className="p-4 bg-gray-900/50 border-t border-gray-700">
           {isPending ? (
             <button 
-              onClick={() => updateStatus(order.id, 'preparing')}
+              onClick={() => setPreparingOrderId(order.id)}
               className="w-full py-4 bg-amber-600 hover:bg-amber-500 text-white font-bold text-lg rounded-xl transition-colors active:scale-95"
             >
               Start Preparing
@@ -230,6 +244,48 @@ export default function KitchenDisplayPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Preparation Time Modal */}
+      {preparingOrderId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm pointer-events-auto">
+          <div className="bg-gray-800 p-6 rounded-3xl w-full max-w-sm shadow-2xl relative animate-in fade-in zoom-in duration-200 border border-gray-700">
+            <h3 className="text-xl font-bold tracking-wider text-gray-100 mb-2">SET PREP TIME</h3>
+            <p className="text-sm text-gray-400 mb-4">Enter estimated preparation time in minutes.</p>
+            <input
+              type="number"
+              value={prepTime}
+              onChange={(e) => setPrepTime(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 bg-gray-900 text-gray-100 font-mono text-lg"
+              autoFocus
+              min="1"
+            />
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setPreparingOrderId(null)} 
+                className="flex-1 py-3 bg-gray-700 text-gray-300 rounded-xl font-bold hover:bg-gray-600 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  if (!preparingOrderId) return;
+                  const minutes = parseInt(prepTime, 10);
+                  if (!isNaN(minutes) && minutes > 0) {
+                    const estimatedReadyTime = new Date(Date.now() + minutes * 60000).toISOString();
+                    updateStatus(preparingOrderId, 'preparing', estimatedReadyTime);
+                    setPreparingOrderId(null);
+                  } else {
+                    toast.error("Invalid time entered.");
+                  }
+                }} 
+                className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-500 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
