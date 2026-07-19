@@ -217,11 +217,11 @@ export default function LandingPageClient({ popularItems }: { popularItems: Menu
             </p>
 
             <div className="flex flex-wrap items-center gap-4">
-              <Link href="/waitlist" className="inline-block bg-[#985923] text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold text-xs md:text-sm tracking-widest hover:bg-[#7D491C] transition-colors shadow-md text-center flex-1 sm:flex-none">
-                MAKE A RESERVATION
-              </Link>
-              <Link href="/menu" className="inline-block bg-transparent text-[#2C331F] border-2 border-[#2C331F] px-6 py-2.5 md:px-8 md:py-3.5 rounded-xl font-bold text-xs md:text-sm tracking-widest hover:bg-black/5 transition-colors shadow-sm text-center flex-1 sm:flex-none">
+              <Link href="/menu" className="inline-block bg-[#985923] text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold text-xs md:text-sm tracking-widest hover:bg-[#7D491C] transition-colors shadow-md text-center flex-1 sm:flex-none">
                 BROWSE MENU
+              </Link>
+              <Link href="/waitlist" className="inline-block bg-transparent text-[#2C331F] border-2 border-[#2C331F] px-6 py-2.5 md:px-8 md:py-3.5 rounded-xl font-bold text-xs md:text-sm tracking-widest hover:bg-black/5 transition-colors shadow-sm text-center flex-1 sm:flex-none">
+                MAKE A RESERVATION
               </Link>
             </div>
           </div>
@@ -310,29 +310,36 @@ export default function LandingPageClient({ popularItems }: { popularItems: Menu
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            <div className="bg-[#FAF8F3] p-8 md:p-10 rounded-[2rem] hover:-translate-y-2 transition-all duration-300 border border-[#E8E2D2] flex flex-col shadow-sm hover:shadow-lg group">
-              <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-8 shadow-sm border border-[#E8E2D2] group-hover:scale-110 transition-transform duration-500">
-                <QrCode className="text-[#985923]" size={32} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <div className="bg-[#FAF8F3] p-8 md:p-12 rounded-[2rem] hover:-translate-y-2 transition-all duration-300 border border-[#E8E2D2] flex flex-col justify-center shadow-sm hover:shadow-lg group relative overflow-hidden md:row-span-2">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+              <div className="w-20 h-20 rounded-3xl bg-white flex items-center justify-center mb-10 shadow-sm border border-[#E8E2D2] group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 relative z-10">
+                <QrCode className="text-[#985923]" size={40} />
               </div>
-              <h3 className="text-2xl font-bold text-[#2C331F] mb-4 tracking-wide">QR Table Ordering</h3>
-              <p className="text-[#2C331F]/80 text-base leading-relaxed font-medium">Skip the line entirely. Just scan the QR code on your table to view our digital menu and order instantly.</p>
+              <h3 className="text-3xl md:text-4xl font-bold text-[#2C331F] mb-6 tracking-wide relative z-10">QR Table Ordering</h3>
+              <p className="text-[#2C331F]/80 text-lg leading-relaxed font-medium relative z-10 max-w-md">Skip the line entirely. Just scan the QR code on your table to view our digital menu and order instantly, from the comfort of your seat without waiting for a server.</p>
             </div>
 
-            <div className="bg-[#FAF8F3] p-8 md:p-10 rounded-[2rem] hover:-translate-y-2 transition-all duration-300 border border-[#E8E2D2] flex flex-col shadow-sm hover:shadow-lg group">
-              <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-8 shadow-sm border border-[#E8E2D2] group-hover:scale-110 transition-transform duration-500">
-                <Timer className="text-[#985923]" size={32} />
+            <div className="bg-[#FAF8F3] p-8 rounded-[2rem] hover:-translate-y-2 transition-all duration-300 border border-[#E8E2D2] flex flex-col shadow-sm hover:shadow-lg group relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+              <div className="flex items-center gap-6 mb-4 relative z-10">
+                <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-[#E8E2D2] group-hover:scale-110 transition-transform duration-500">
+                  <Timer className="text-[#985923]" size={28} />
+                </div>
+                <h3 className="text-2xl font-bold text-[#2C331F] tracking-wide">Live Order Tracking</h3>
               </div>
-              <h3 className="text-2xl font-bold text-[#2C331F] mb-4 tracking-wide">Live Order Tracking</h3>
-              <p className="text-[#2C331F]/80 text-base leading-relaxed font-medium">Know exactly when your coffee is being brewed. Watch the status of your order update in real-time.</p>
+              <p className="text-[#2C331F]/80 text-base leading-relaxed font-medium relative z-10">Know exactly when your coffee is being brewed. Watch the status of your order update in real-time right on your device.</p>
             </div>
 
-            <div className="bg-[#FAF8F3] p-8 md:p-10 rounded-[2rem] hover:-translate-y-2 transition-all duration-300 border border-[#E8E2D2] flex flex-col shadow-sm hover:shadow-lg group">
-              <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-8 shadow-sm border border-[#E8E2D2] group-hover:scale-110 transition-transform duration-500">
-                <Gift className="text-[#985923]" size={32} />
+            <div className="bg-[#FAF8F3] p-8 rounded-[2rem] hover:-translate-y-2 transition-all duration-300 border border-[#E8E2D2] flex flex-col shadow-sm hover:shadow-lg group relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+              <div className="flex items-center gap-6 mb-4 relative z-10">
+                <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-[#E8E2D2] group-hover:scale-110 transition-transform duration-500">
+                  <Gift className="text-[#985923]" size={28} />
+                </div>
+                <h3 className="text-2xl font-bold text-[#2C331F] tracking-wide">Membership Rewards</h3>
               </div>
-              <h3 className="text-2xl font-bold text-[#2C331F] mb-4 tracking-wide">Membership Rewards</h3>
-              <p className="text-[#2C331F]/80 text-base leading-relaxed font-medium">Every cup counts. Join our membership program, earn stamps with each order, and redeem them for free drinks.</p>
+              <p className="text-[#2C331F]/80 text-base leading-relaxed font-medium relative z-10">Every cup counts. Join our membership program, earn stamps with each order, and redeem them for free drinks and pastries.</p>
             </div>
           </div>
         </div>
@@ -352,15 +359,17 @@ export default function LandingPageClient({ popularItems }: { popularItems: Menu
           </div>
 
           {popularItems.length === 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+            <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-6 pb-8 hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
               {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="bg-white/50 animate-pulse rounded-2xl h-80 border border-coffee-100"></div>
+                <div key={n} className="snap-center shrink-0 w-[260px] sm:w-[280px] bg-white/50 animate-pulse rounded-2xl h-80 border border-coffee-100"></div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+            <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-6 pb-8 hide-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
               {popularItems.map((item) => (
-                <MenuCard key={item.id} item={item} previewOnly={true} />
+                <div key={item.id} className="snap-center shrink-0 w-[260px] sm:w-[280px]">
+                  <MenuCard item={item} previewOnly={true} />
+                </div>
               ))}
             </div>
           )}
@@ -409,23 +418,53 @@ export default function LandingPageClient({ popularItems }: { popularItems: Menu
         </div>
       </section>
 
+      {/* Gallery Section */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold font-serif text-coffee-900 mb-4">Life at Cafe Veřona</h2>
+            <p className="text-lg text-coffee-600">A glimpse into our daily craft and welcoming space.</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 auto-rows-[150px] md:auto-rows-[200px]">
+            <div className="rounded-[1.5rem] md:rounded-3xl overflow-hidden shadow-sm group col-span-2 row-span-2">
+              <img src="/hero_artisan.png" alt="Barista crafting coffee" className="w-full h-full object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-700" />
+            </div>
+            <div className="rounded-[1.5rem] md:rounded-3xl overflow-hidden shadow-sm group col-span-1 row-span-1">
+              <img src="/hero_coffee_cup.png" alt="Coffee Cup" className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" />
+            </div>
+            <div className="rounded-[1.5rem] md:rounded-3xl overflow-hidden shadow-sm group col-span-1 row-span-1">
+              <img src="/hero_pastries.png" alt="Pastries" className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" />
+            </div>
+            <div className="rounded-[1.5rem] md:rounded-3xl overflow-hidden shadow-sm group col-span-2 row-span-1">
+              <img src="/hero_baristas.png" alt="Our Baristas" className="w-full h-full object-cover object-[center_30%] group-hover:scale-105 transition-transform duration-700" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials */}
-      <section id="testimonials" className="py-24 bg-[#E8DCCC]">
+      <section id="testimonials" className="py-24 bg-[#E8DCCC] overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-5xl font-bold font-serif text-center text-coffee-900 mb-16">What Our Guests Say</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        </div>
+        
+        <div className="w-full inline-flex flex-nowrap overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
+          <div className="flex items-center justify-center md:justify-start [&_li]:mx-4 animate-marquee hover:[animation-play-state:paused]">
             {[
+              { name: "Rahul S.", quote: "The best latte I've had in years. Ordering from the table made my morning meeting so much smoother!" },
+              { name: "Nysa D.", quote: "Their digital menu is incredibly slick. The loyalty program keeps me coming back every single day." },
+              { name: "Elsa R.", quote: "Amazing ambiance and even better coffee. The avocado toast is an absolute must-try." },
               { name: "Rahul S.", quote: "The best latte I've had in years. Ordering from the table made my morning meeting so much smoother!" },
               { name: "Nysa D.", quote: "Their digital menu is incredibly slick. The loyalty program keeps me coming back every single day." },
               { name: "Elsa R.", quote: "Amazing ambiance and even better coffee. The avocado toast is an absolute must-try." }
             ].map((testimonial, i) => (
-              <div key={i} className="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-sm border border-white">
+              <div key={i} className="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-sm border border-white w-[300px] md:w-[400px] shrink-0 mx-4 whitespace-normal">
                 <div className="flex text-amber-400 mb-4">
                   {[...Array(5)].map((_, idx) => <Star key={idx} fill="currentColor" size={18} />)}
                 </div>
-                <p className="text-coffee-700 italic mb-6">"{testimonial.quote}"</p>
-                <div className="flex items-center gap-4">
+                <p className="text-coffee-700 italic mb-6 leading-relaxed">"{testimonial.quote}"</p>
+                <div className="flex items-center gap-4 mt-auto">
                   <div className="w-10 h-10 bg-coffee-200 rounded-full flex items-center justify-center font-bold text-coffee-800">
                     {testimonial.name.charAt(0)}
                   </div>

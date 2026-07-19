@@ -39,4 +39,25 @@
   .card-hover {
     @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
   }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .animate-marquee {
+    animation: marquee 35s linear infinite;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }

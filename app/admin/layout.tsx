@@ -104,6 +104,19 @@ export default function AdminLayout({
 
   const allLinks = navSections.flatMap(section => section.links);
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', { method: 'POST' });
+      window.location.href = '/admin/login';
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
+
+  if (pathname === '/admin/login') {
+    return <>{children}</>;
+  }
+
   return (
     <div className="flex h-screen bg-cream">
       {/* Sidebar */}
@@ -152,7 +165,10 @@ export default function AdminLayout({
         </nav>
         
         <div className="p-4 border-t border-coffee-800 space-y-2">
-          <p className="text-xs text-coffee-400 px-2 font-medium uppercase tracking-wider">Customer App Links</p>
+          <button onClick={handleLogout} className="flex items-center justify-start gap-3 w-full px-4 py-2 hover:bg-coffee-800 rounded-lg text-sm text-coffee-200 hover:text-white transition-colors">
+            <LogOut size={16} /> Log Out
+          </button>
+          <p className="text-xs text-coffee-400 px-2 font-medium uppercase tracking-wider mt-4">Customer App Links</p>
           <Link href="/membership/lookup" className="flex items-center justify-start gap-3 w-full px-4 py-2 bg-coffee-800 rounded-lg text-sm text-coffee-200 hover:text-white transition-colors">
             ☕ Memberships
           </Link>
@@ -187,6 +203,10 @@ export default function AdminLayout({
             </Link>
           );
         })}
+        <button onClick={handleLogout} className="flex flex-col items-center justify-center min-w-[72px] p-2 text-coffee-300">
+          <LogOut size={20} />
+          <span className="text-[10px] mt-1">Logout</span>
+        </button>
       </div>
     </div>
   );
